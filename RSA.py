@@ -21,7 +21,7 @@ class Person:
         return pow(c, self.d) % self.public_key
 
     def generate_keys(self):
-        # choose two prime numbers p and q that are coprime
+        # choose two prime numbers p and q
         p = random.randint(0, 100)
         while miller_rabin(p, 10) is False:
             p = random.randint(0, 100)
@@ -41,7 +41,7 @@ class Person:
             e = random.randint(2, m_lambda)
         if e >= m_lambda:
             return False
-        if gcd(e, m_lambda) != 1 or (p - q) // 2 == 0:
+        if gcd(e, m_lambda) != 1 or (p - q) // 2.0 == 0:
             return False
         self.e = e
         self.d = mod_inverse(e, m_lambda)
@@ -61,7 +61,7 @@ def miller_rabin(n, k):
     if n <= 3:
         return True
     # d is odd number and d*2^r is n-1
-    # r > 0 is assumed since n is positive
+    # r > 0 is assumed since 0 < n < 1
     d = n - 1
     while d % 2 == 0:
         d /= 2.
@@ -120,8 +120,13 @@ if __name__ == "__main__":
     print(Arlen.public_key, Arlen.d, Arlen.e)
     Nancy.receive_key(Arlen.get_public_key())
     print(Nancy.public_key, Nancy.d, Nancy.e)
-    cipher = Nancy.encrypt(18)
-    plain_text = Arlen.decrypt(cipher)
-    print(cipher)
-    print(plain_text)
+    M = [ord(letter) for letter in "Hello, World!"]
+    cipher = [Nancy.encrypt(m) for m in M]
+    plain_text = [Arlen.decrypt(c) for c in cipher]
+    print([chr(ch) for ch in cipher])
+    pt = [chr(ch) for ch in plain_text]
+    text = ""
+    for c in pt:
+        text += c
+    print(text)
 
