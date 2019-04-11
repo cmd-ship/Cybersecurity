@@ -20,9 +20,6 @@ class Person:
     def decrypt(self, c):
         return pow(c, self.d) % self.public_key
 
-    def receive_key(self, pub_key):
-        self.public_key, self.e = pub_key
-
     def generate_keys(self):
         # choose two prime numbers p and q that are coprime
         p = random.randint(0, 100)
@@ -32,8 +29,8 @@ class Person:
         while q != p and miller_rabin(q, 10) is False:
             q = random.randint(0, 100)
         self.public_key = p*q
-        while self.d is None:
-            self.get_multiplicative_inverse(p, q)
+        while self.get_multiplicative_inverse(p, q) is False:
+            continue
 
     def get_multiplicative_inverse(self, p, q):
         m_lambda = least_common_multiple(p - 1, q - 1)
@@ -52,6 +49,9 @@ class Person:
 
     def get_public_key(self):
         return self.public_key, self.e
+
+    def receive_key(self, pub_key):
+        self.public_key, self.e = pub_key
 
 
 # Miller-Rabin primality test
